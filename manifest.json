@@ -1,0 +1,42 @@
+{
+  "manifest_version": 3,
+  "name": "My Apps Launcher",
+  "version": "1.0.0",
+  "description": "Microsoft My Appsのアプリ一覧を素早く表示・アクセスするChrome拡張機能",
+  "permissions": [
+    "storage",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://myapps.microsoft.com/*",
+    "https://myapplications.microsoft.com/*",
+    "https://launcher.myapps.microsoft.com/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    },
+    "default_title": "My Apps Launcher"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://myapps.microsoft.com/*",
+        "https://myapplications.microsoft.com/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}

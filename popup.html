@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Apps Launcher</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <!-- ヘッダー -->
+    <header class="header">
+      <div class="header-title">
+        <svg class="header-icon" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+          <rect x="4" y="4" width="120" height="120" rx="24" ry="24" fill="#1a1a2e"/>
+          <rect x="20" y="22" width="24" height="24" rx="5" fill="#4cc9f0" opacity="0.9"/>
+          <rect x="52" y="22" width="24" height="24" rx="5" fill="#4895ef" opacity="0.86"/>
+          <rect x="20" y="54" width="24" height="24" rx="5" fill="#4361ee" opacity="0.82"/>
+          <rect x="52" y="54" width="24" height="24" rx="5" fill="#3f37c9" opacity="0.67"/>
+          <path d="M96 20 C96 20 85 34 85 48 C85 58 90 64 96 68 C102 64 107 58 107 48 C107 34 96 20 96 20Z" fill="#f0f0f5"/>
+          <circle cx="96" cy="46" r="5" fill="#4cc9f0"/><circle cx="96" cy="46" r="3.5" fill="#1a1a2e"/>
+          <path d="M85 58 L78 65 L85 62Z" fill="#f72585"/><path d="M107 58 L114 65 L107 62Z" fill="#f72585"/>
+          <path d="M91 68 L96 80 L101 68" fill="#f77f00"/><path d="M93 68 L96 76 L99 68" fill="#fcbf49"/>
+        </svg>
+        <h1>My Apps</h1>
+      </div>
+      <div class="header-actions">
+        <button id="refreshBtn" class="icon-btn" title="アプリ一覧を更新">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+          </svg>
+        </button>
+        <button id="settingsBtn" class="icon-btn" title="設定">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- 検索バー -->
+    <div class="search-bar">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/>
+        <path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" id="searchInput" placeholder="アプリを検索..." autocomplete="off">
+      <button id="clearSearch" class="clear-btn" title="クリア" style="display: none;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/>
+          <line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- 表示切替 -->
+    <div class="view-controls">
+      <span class="app-count" id="appCount">0 個のアプリ</span>
+      <div class="view-controls-right">
+        <!-- ソート切替 -->
+        <div class="sort-toggle">
+          <button id="sortBtn" class="sort-btn" title="名前順にソート">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 6h8M3 12h5M3 18h3"/>
+              <path d="M16 6v14M12 16l4 4 4-4"/>
+            </svg>
+            <span id="sortLabel">A-Z</span>
+          </button>
+        </div>
+        <!-- 表示切替 -->
+        <div class="view-toggle">
+          <button id="gridViewBtn" class="view-btn active" title="グリッド表示">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <rect x="3" y="3" width="7" height="7" rx="1"/>
+              <rect x="14" y="3" width="7" height="7" rx="1"/>
+              <rect x="3" y="14" width="7" height="7" rx="1"/>
+              <rect x="14" y="14" width="7" height="7" rx="1"/>
+            </svg>
+          </button>
+          <button id="listViewBtn" class="view-btn" title="リスト表示">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <rect x="3" y="4" width="18" height="3" rx="1"/>
+              <rect x="3" y="10.5" width="18" height="3" rx="1"/>
+              <rect x="3" y="17" width="18" height="3" rx="1"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- アプリ一覧 -->
+    <div id="appGrid" class="app-grid">
+      <!-- アプリタイルはJSで動的に生成 -->
+    </div>
+
+    <!-- 空状態 -->
+    <div id="emptyState" class="empty-state" style="display: none;">
+      <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+        <line x1="3" y1="9" x2="21" y2="9"/>
+        <line x1="9" y1="21" x2="9" y2="9"/>
+      </svg>
+      <p class="empty-title" id="emptyTitle">アプリが見つかりません</p>
+      <p class="empty-description" id="emptyDescription">
+        myapps.microsoft.com にアクセスしてアプリ一覧を取得してください。
+      </p>
+      <a href="https://myapps.microsoft.com" target="_blank" id="fetchAppsBtn" class="primary-btn">
+        My Appsを開く
+      </a>
+    </div>
+
+    <!-- 読み込み中 -->
+    <div id="loadingState" class="loading-state" style="display: none;">
+      <div class="spinner"></div>
+      <p>アプリを読み込み中...</p>
+    </div>
+
+    <!-- フッター -->
+    <footer class="footer">
+      <span>最終更新: <span id="lastUpdated">未取得</span></span>
+    </footer>
+  </div>
+
+  <!-- 設定モーダル -->
+  <div id="settingsModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>設定</h2>
+        <button id="closeSettings" class="icon-btn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="setting-item">
+          <label class="setting-label">キャッシュをクリア</label>
+          <p class="setting-description">保存されたアプリデータをすべて削除します</p>
+          <button id="clearCacheBtn" class="danger-btn">キャッシュをクリア</button>
+        </div>
+        <div class="setting-item">
+          <label class="setting-label">データのエクスポート</label>
+          <p class="setting-description">アプリデータをJSONファイルとしてエクスポートします</p>
+          <button id="exportBtn" class="secondary-btn">エクスポート</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
