@@ -1,0 +1,54 @@
+name: My Apps Launcher リリース
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: リポジトリをチェックアウト
+        uses: actions/checkout@v4
+
+      - name: タグからバージョンを取得
+        id: version
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "バージョン: $VERSION"
+
+      - name: 拡張機能のzipファイルを作成
+        run: |
+          zip -r "my-apps-launcher-v${{ steps.version.outputs.version }}.zip" \
+            manifest.json \
+            popup.html \
+            popup.css \
+            popup.js \
+            content.js \
+            background.js \
+            icons/icon16.png \
+            icons/icon48.png \
+            icons/icon128.png
+
+      - name: GitHub Releaseを作成
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: My Apps Launcher v${{ steps.version.outputs.version }}
+          body: |
+            ## My Apps Launcher v${{ steps.version.outputs.version }}
+
+            Chrome拡張機能のリリースパッケージです。
+
+            ### インストール方法
+            1. zipファイルをダウンロードして展開する
+            2. Chromeで `chrome://extensions/` を開く
+            3. 「デベロッパーモード」を有効にする
+            4. 「パッケージ化されていない拡張機能を読み込む」で展開したディレクトリを選択する
+          files: my-apps-launcher-v${{ steps.version.outputs.version }}.zip
+          generate_release_notes: true
