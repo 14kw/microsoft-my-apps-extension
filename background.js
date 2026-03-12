@@ -58,17 +58,28 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 /**
+ * バッジを表示する対象のホスト名一覧
+ */
+const ALLOWED_HOSTS = [
+  "myapps.microsoft.com",
+  "myapplications.microsoft.com",
+];
+
+/**
  * タブ更新時にMy Appsページであればバッジを表示する
  */
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete" && tab.url) {
-    if (
-      tab.url.includes("myapps.microsoft.com") ||
-      tab.url.includes("myapplications.microsoft.com")
-    ) {
-      // My Appsページが開かれたことを示すバッジ
-      chrome.action.setBadgeText({ text: "✓", tabId });
-      chrome.action.setBadgeBackgroundColor({ color: "#107c10", tabId });
+    try {
+      const parsedUrl = new URL(tab.url);
+      const host = parsedUrl.hostname;
+      if (ALLOWED_HOSTS.includes(host)) {
+        // My Appsページが開かれたことを示すバッジ
+        chrome.action.setBadgeText({ text: "✓", tabId });
+        chrome.action.setBadgeBackgroundColor({ color: "#107c10", tabId });
+      }
+    } catch (e) {
+      // 無効なURLの場合はバッジを更新しない
     }
   }
 });
