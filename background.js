@@ -74,9 +74,13 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
         // My Appsページが開かれたことを示すバッジ
         chrome.action.setBadgeText({ text: "✓", tabId });
         chrome.action.setBadgeBackgroundColor({ color: "#107c10", tabId });
+      } else {
+        // 許可されていないホストの場合はバッジをクリアする
+        chrome.action.setBadgeText({ text: "", tabId });
       }
     } catch (e) {
-      // 無効なURLの場合はバッジを設定しない
+      // 無効なURLまたはURL解析エラーの場合はバッジをクリアする
+      chrome.action.setBadgeText({ text: "", tabId });
     }
   }
 });
