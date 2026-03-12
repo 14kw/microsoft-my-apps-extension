@@ -71,15 +71,24 @@ const ALLOWED_HOSTS = [
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete" && tab.url) {
     try {
-      const parsedUrl = new URL(tab.url);
-      const host = parsedUrl.hostname;
-      if (ALLOWED_HOSTS.includes(host)) {
+      const url = new URL(tab.url);
+      const hostname = url.hostname;
+      const allowedHosts = [
+        "myapps.microsoft.com",
+        "myapplications.microsoft.com",
+      ];
+
+      if (allowedHosts.includes(hostname)) {
         // My Appsページが開かれたことを示すバッジ
         chrome.action.setBadgeText({ text: "✓", tabId });
         chrome.action.setBadgeBackgroundColor({ color: "#107c10", tabId });
+      } else {
+        // 許可されていないホストの場合はバッジをクリアする
+        chrome.action.setBadgeText({ text: "", tabId });
       }
     } catch (e) {
-      // 無効なURLの場合はバッジを更新しない
+      // 無効なURLまたはURL解析エラーの場合はバッジをクリアする
+      chrome.action.setBadgeText({ text: "", tabId });
     }
   }
 });
