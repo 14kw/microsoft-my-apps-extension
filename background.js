@@ -58,6 +58,14 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 });
 
 /**
+ * バッジを表示する対象のホスト名一覧
+ */
+const ALLOWED_HOSTS = [
+  "myapps.microsoft.com",
+  "myapplications.microsoft.com",
+];
+
+/**
  * タブ更新時にMy Appsページであればバッジを表示する
  */
 chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
