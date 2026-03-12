@@ -64,13 +64,13 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
   if (changeInfo.status === "complete" && tab.url) {
     try {
       const url = new URL(tab.url);
-      const host = url.host;
+      const hostname = url.hostname;
       const allowedHosts = [
         "myapps.microsoft.com",
         "myapplications.microsoft.com",
       ];
 
-      if (allowedHosts.includes(host)) {
+      if (allowedHosts.includes(hostname)) {
         // My Appsページが開かれたことを示すバッジ
         chrome.action.setBadgeText({ text: "✓", tabId });
         chrome.action.setBadgeBackgroundColor({ color: "#107c10", tabId });
